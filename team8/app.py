@@ -1,131 +1,85 @@
 import streamlit as st
 from pathlib import Path
+from PIL import Image
 
-# =========================
-# パス設定（画像は同階層）
-# =========================
-BASE_DIR = Path(__file__).resolve().parent
-IMAGE_DIR = BASE_DIR
+# ===== 基本設定 =====
+BASE_DIR = Path(__file__).parent
 
-def show_image(name, width=None):
-    path = IMAGE_DIR / name
-    if path.exists():
-        st.image(str(path), width=width)
-    else:
-        st.warning(f"画像が見つかりません: {name}")
-
-# =========================
-# 初期設定
-# =========================
-st.set_page_config(
-    page_title="ポケモンSV 初心者サポート",
-    layout="centered"
-)
-
-# session_state 初期化
 if "page" not in st.session_state:
-    st.session_state.page = "starter"
+    st.session_state.page = "home"
 
 if "starter" not in st.session_state:
     st.session_state.starter = None
 
-# セーフティチェック（再読み込み対策）
-if st.session_state.page != "starter" and st.session_state.starter is None:
-    st.session_state.page = "starter"
 
-# =========================
-# 御三家選択画面
-# =========================
+# ===== 画像表示 =====
+def show_image(filename):
+    path = BASE_DIR / filename
+    image = Image.open(path)
+    st.image(image, use_column_width=True)
+
+
+# ===== 御三家選択 =====
 def select_starter():
-    st.title("最初に選んだポケモンを教えてください")
-    st.markdown("### どれを選んでも大丈夫。あなたの選択を支えます。")
+    st.title("ポケモンSV 初心者攻略サイト")
+    st.write("最初に選んだ御三家に合わせて、やさしい攻略を案内します。")
 
     col1, col2, col3 = st.columns(3)
 
     with col1:
-        show_image("sprigatito.png", width=120)
+        show_image("sprigatito.png")
         if st.button("ニャオハ"):
             st.session_state.starter = "ニャオハ"
-            st.session_state.page = "home"
+            st.session_state.page = "story"
 
     with col2:
-        show_image("fuecoco.png", width=120)
+        show_image("fuecoco.png")
         if st.button("ホゲータ"):
             st.session_state.starter = "ホゲータ"
-            st.session_state.page = "home"
+            st.session_state.page = "story"
 
     with col3:
-        show_image("quaxly.png", width=120)
+        show_image("quaxly.png")
         if st.button("クワッス"):
             st.session_state.starter = "クワッス"
-            st.session_state.page = "home"
 
-# =========================
-# トップページ
-# =========================
-def home():
-    starter = st.session_state.starter
-    st.title(f"{starter} を選んだ人向け攻略")
 
-    st.info("""
-このサイトは「最短攻略」を目的としていません。
-どの御三家でも、心が折れずに楽しめることを大切にしています。
-""")
-
-    if st.button("ストーリー攻略を見る"):
-        st.session_state.page = "story"
-
-    if st.button("御三家を選び直す"):
-        st.session_state.page = "starter"
-
-# =========================
-# ストーリー攻略
-# =========================
+# ===== ストーリー攻略 =====
 def story():
-    # =========================
-    # セーフティガード
-    # =========================
-    if st.session_state.starter is None:
-        st.session_state.page = "starter"
-        st.experimental_rerun()
+    st.title(f"{st.session_state.starter} を選んだ人向け攻略")
 
-    starter = st.session_state.starter
+    st.subheader("📖 ストーリーの進め方")
+    st.write("""
+    ・無理にレベルを上げなくてOK  
+    ・タイプ相性だけ意識すれば大丈夫  
+    ・負けてもペナルティはありません
+    """)
 
-    st.title("ストーリー攻略（初心者向け）")
-
+    st.subheader("🗺️ おすすめレベル上げ場所")
     show_image("sv_map_all.png")
 
-    level = st.slider(
-        "手持ちポケモンの平均レベル",
-        1, 60, 10,
-        key="level_slider"
-    )
+    if st.session_state.starter == "ニャオハ":
+        st.write("草タイプが不利な炎ジムに注意！")
+        st.write("おすすめ仲間：パモ、ウパー")
 
-    # =========================
-    # おすすめ仲間
-    # =========================
-    st.markdown("## 🌟 御三家別おすすめ仲間")
+    elif st.session_state.starter == "ホゲータ":
+        st.write("水タイプの敵には注意！")
+        st.write("おすすめ仲間：マリル、シェルダー")
 
-    if starter == "ニャオハ":
-        st.success("""
-- パモ：でんきで弱点補助  
-- イワンコ：安定アタッカー  
-- ドロバンコ：耐久役
-""")
+    elif st.session_state.starter == "クワッス":
+        st.write("電気タイプに注意！")
+        st.write("おすすめ仲間：ウパー、ディグダ")
 
-    elif starter == "ホゲータ":
-        st.success("""
-- マリル：みずで弱点補助  
-- パモ：スピード要員  
-- ココガラ：安全枠
-""")
+    if st.button("最初に戻る"):
+        st.session_state.page = "home"
 
-    elif starter == "クワッス":
-        st.success("""
-- パモ：序盤の要  
-- ヤヤコマ：ひこうで有利  
-- イワンコ：火力補助
-""")
+
+# ===== 画面制御 =====
+if st.session_state.page == "home":
+    select_starter()
+elif st.session_state.page == "story":
+    story()
+
 
     # =========================
     # レベル別進行
@@ -173,4 +127,5 @@ elif st.session_state.page == "home":
     home()
 elif st.session_state.page == "story":
     story()
+
 
