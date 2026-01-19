@@ -28,7 +28,7 @@ def show_image(filename):
 # ======================
 def home():
     st.title("ポケモンSV｜初心者限定攻略サイト")
-    st.write("ゲーム内で選択した御三家を選んでください。")
+    st.write("ゲーム内で選択したポケモンを選んでください。")
 
     col1, col2, col3 = st.columns(3)
 
@@ -167,3 +167,4 @@ if st.session_state.page == "home":
     home()
 elif st.session_state.page == "story":
     story()
+
