@@ -28,7 +28,7 @@ def show_image(filename):
 # ======================
 def home():
     st.title("ポケモンSV｜初心者限定攻略サイト")
-    st.write("どの御三家を選んでも、必ずクリアできます。")
+    st.write("ゲーム内で選択した御三家を選んでください。")
 
     col1, col2, col3 = st.columns(3)
 
@@ -61,7 +61,6 @@ def story():
     st.markdown("""
 ### 🎮 このサイトの考え方
 - レベルを上げれば必ず勝てる  
-- 負けてもペナルティなし  
 - 好きなポケモンを使ってOK  
 """)
 
@@ -153,9 +152,9 @@ def story():
     if starter == "ニャオハ":
         st.write("🔥 炎・虫相手は無理しない")
     elif starter == "ホゲータ":
-        st.write("💧 水タイプは仲間で対処")
+        st.write("💧 水・地面タイプは仲間で対処")
     elif starter == "クワッス":
-        st.write("⚡ 電気タイプは要注意")
+        st.write("⚡ 電気・草タイプは要注意")
 
     if st.button("御三家選択に戻る"):
         st.session_state.page = "home"
